@@ -1,26 +1,21 @@
+
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
 
-typedef enum
+void CheckPassword(char password[])
 {
-    WEAK,
-    MEDIUM,
-    STRONG
-} PasswordStrength;
+    int length = strlen(password);
 
-PasswordStrength checkPassword(const char password[])
-{
     int upper = 0;
     int lower = 0;
     int digit = 0;
     int symbol = 0;
-
-    int length = strlen(password);
+    int score = 0;
 
     for (int i = 0; i < length; i++)
     {
-        unsigned char ch = password[i];
+        unsigned char ch = (unsigned char)password[i];
 
         if (isupper(ch))
             upper = 1;
@@ -32,31 +27,48 @@ PasswordStrength checkPassword(const char password[])
             symbol = 1;
     }
 
-    int score = upper + lower + digit + symbol;
+    if (length >= 8)
+        score++;
 
-    if (length > 8 && score == 4)
-        return STRONG;
-    else if (length > 8 && score >= 2)
-        return MEDIUM;
+    if (upper)
+        score++;
+
+    if (lower)
+        score++;
+
+    if (digit)
+        score++;
+
+    if (symbol)
+        score++;
+
+    printf("\nPassword Length: %d\n", length);
+
+    printf("\nPassword Requirements:\n");
+    printf("At least 8 characters: %s\n", length >= 8 ? "Yes" : "No");
+    printf("Uppercase letters: %s\n", upper ? "Yes" : "No");
+    printf("Lowercase letters: %s\n", lower ? "Yes" : "No");
+    printf("Numbers: %s\n", digit ? "Yes" : "No");
+    printf("Symbols: %s\n", symbol ? "Yes" : "No");
+
+    printf("\nPassword Score: %d/5\n", score);
+
+    if (score <= 2)
+        printf("Password Strength: Weak\n");
+    else if (score <= 4)
+        printf("Password Strength: Acceptable\n");
     else
-        return WEAK;
+        printf("Password Strength: Strong\n");
 }
 
-int main(void)
+int main()
 {
     char password[100];
 
     printf("Enter your password: ");
     scanf("%99s", password);
 
-    PasswordStrength result = checkPassword(password);
-
-    if (result == STRONG)
-        printf("Your Password is Strong\n");
-    else if (result == MEDIUM)
-        printf("Your Password is Medium\n");
-    else
-        printf("Your Password isWeak\n");
+    CheckPassword(password);
 
     return 0;
 }
